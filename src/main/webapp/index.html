@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>nano-probe</title>
+	<script src="jquery-1.11.2.min.js"></script>
+	<script src="jquery.tmpl.min.js"></script>
+</head>
+<style>
+	body {
+		width: 960px;
+		margin: 0 auto;
+	}
+
+	table {
+		border-collapse: collapse;
+	}
+
+	th, td, tr {
+		border: 1px solid lightgray;
+		padding: 4px 8px;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	.clearfix {
+		clear: both;
+	}
+
+	.left {
+		float: left;
+	}
+
+	.status-name {
+		float: right;
+		line-height: 36px;
+	}
+
+</style>
+<body>
+<div class="container">
+	<h1>WebApps Status Monitor</h1>
+	<table>
+		<thead>
+		<th>Name</th>
+		<th>Status</th>
+		</thead>
+		<tbody id="webapps-list">
+		<tr>
+			<td>tangodnes</td>
+			<td>
+				<div class="clearfix">
+					<div class="left">
+						<img src="bullet_green.png">
+					</div>
+					<div class="status-name">
+						started
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		</tbody>
+	</table>
+</div>
+<script>
+	$(function () {
+		var webappsList = $('#webapps-list');
+		$.get('api/webapps', function (response) {
+			if (response) {
+				webappsList.empty();
+				console.log(typeof response);
+				response.forEach(function(item) {
+					var image = 'bullet_green.png';
+					if ('started' != item.status) {
+						image = 'bullet_red.png';
+					}
+					$.tmpl('<tr>' +
+							'<td>${name}</td>' +
+							'<td>' +
+								'<div class="clearfix">' +
+									'<div class="left">' +
+										'<img src="${image}">' +
+									'</div>' +
+									'<div class="status-name">${status}</div>' +
+								'</div>' +
+							'</td>' +
+							'</tr>', {"name": item.name, "status": item.status, "image": image}).appendTo(webappsList);
+
+				});
+
+			}
+
+		});
+	});
+</script>
+
+</body>
+</html>
